@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#07060d"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FLOW FIELD 流场壁纸"
+            android:textColor="#f4eee6"
+            android:textSize="22sp"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="颜色（RGB 逗号分隔，数量为 3 的倍数）"
+            android:textColor="#9a93a0"
+            android:textSize="13sp"
+            android:layout_marginBottom="6dp" />
+        <EditText
+            android:id="@+id/etColors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#f4eee6"
+            android:background="#16121f"
+            android:padding="12dp"
+            android:inputType="text"
+            android:textSize="13sp"
+            android:layout_marginBottom="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="粒子数（建议 1500 – 6000）"
+            android:textColor="#9a93a0"
+            android:textSize="13sp"
+            android:layout_marginBottom="6dp" />
+        <EditText
+            android:id="@+id/etParticles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#f4eee6"
+            android:background="#16121f"
+            android:padding="12dp"
+            android:inputType="number"
+            android:textSize="14sp"
+            android:layout_marginBottom="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="流速（0.5 – 3.0）"
+            android:textColor="#9a93a0"
+            android:textSize="13sp"
+            android:layout_marginBottom="6dp" />
+        <EditText
+            android:id="@+id/etSpeed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#f4eee6"
+            android:background="#16121f"
+            android:padding="12dp"
+            android:inputType="numberDecimal"
+            android:textSize="14sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="预设配色"
+            android:textColor="#9a93a0"
+            android:textSize="13sp"
+            android:layout_marginBottom="8dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button android:id="@+id/presetSunset" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="日落" android:textSize="12sp" />
+            <Button android:id="@+id/presetOcean" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="海洋" android:textSize="12sp" />
+            <Button android:id="@+id/presetNeon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="霓虹" android:textSize="12sp" />
+            <Button android:id="@+id/presetMono" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="单色" android:textSize="12sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnApply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="应用设置"
+            android:textSize="15sp"
+            android:layout_marginTop="18dp"
+            android:background="#ff7f50"
+            android:textColor="#15110c" />
+
+        <Button
+            android:id="@+id/btnReseed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="重新生成流场（新形态）"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置后回到桌面：长按空白处 → 壁纸 → 选择「Flow Field 流场壁纸」。"
+            android:textColor="#6b6570"
+            android:textSize="12sp"
+            android:layout_marginTop="14dp" />
+
+    </LinearLayout>
+</ScrollView>

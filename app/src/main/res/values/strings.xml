@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Flow Wallpaper</string>
+    <string name="wallpaper_label">Flow Field 流场壁纸</string>
+    <string name="wallpaper_desc">Perlin 噪声粒子流场动态壁纸</string>
+    <string name="settings_title">流场壁纸设置</string>
+</resources>
