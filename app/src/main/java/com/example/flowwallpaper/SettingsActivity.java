@@ -1,6 +1,8 @@
 package com.example.flowwallpaper;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
@@ -28,6 +30,18 @@ public class SettingsActivity extends Activity {
         etColors = findViewById(R.id.etColors);
         etParticles = findViewById(R.id.etParticles);
         etSpeed = findViewById(R.id.etSpeed);
+
+        // Open the system live-wallpaper picker, which DOES list this third-party
+        // wallpaper (unlike the MIUI/HyperOS home-screen wallpaper entry).
+        Button setWp = findViewById(R.id.btnSetWallpaper);
+        setWp.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER);
+                startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(this, "无法打开系统动态壁纸选择器：" + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
 
         SharedPreferences prefs = getSharedPreferences(FlowWallpaperService.PREFS, MODE_PRIVATE);
         etColors.setText(prefs.getString(FlowWallpaperService.KEY_COLORS, DEFAULT_COLORS));
