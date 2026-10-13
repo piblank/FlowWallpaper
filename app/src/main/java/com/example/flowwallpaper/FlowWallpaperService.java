@@ -155,6 +155,7 @@ public class FlowWallpaperService extends WallpaperService {
             W = width;
             H = height;
             initParticles();
+            if (visible) drawFrame();
         }
 
         @Override
@@ -167,8 +168,21 @@ public class FlowWallpaperService extends WallpaperService {
         @Override
         public void onVisibilityChanged(boolean v) {
             visible = v;
-            if (visible) drawFrame();
-            else handler.removeCallbacks(drawRunner);
+            if (visible) {
+                if (isReady()) drawFrame();
+                else scheduleFrame();
+            } else {
+                handler.removeCallbacks(drawRunner);
+            }
+        }
+
+        private boolean isReady() {
+            return W > 0 && H > 0 && particles != null && perlin != null && palette != null && buckets != null;
+        }
+
+        private void scheduleFrame() {
+            handler.removeCallbacks(drawRunner);
+            handler.postDelayed(drawRunner, FRAME_DELAY);
         }
 
         @Override
@@ -199,11 +213,18 @@ public class FlowWallpaperService extends WallpaperService {
 
         private void drawFrame() {
             if (!visible) return;
+            if (!isReady()) {
+                scheduleFrame();
+                return;
+            }
             SurfaceHolder holder = getSurfaceHolder();
             Canvas c = null;
             try {
                 c = holder.lockCanvas();
-                if (c == null) return;
+                if (c == null) {
+                    scheduleFrame();
+                    return;
+                }
 
                 if (clearRequested) {
                     fadePaint.setAlpha(255);
@@ -273,7 +294,7 @@ public class FlowWallpaperService extends WallpaperService {
             } finally {
                 if (c != null) holder.unlockCanvasAndPost(c);
             }
-            handler.postDelayed(drawRunner, FRAME_DELAY);
+            scheduleFrame();
         }
     }
 }
