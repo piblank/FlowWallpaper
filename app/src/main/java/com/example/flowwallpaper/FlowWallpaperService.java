@@ -45,30 +45,40 @@ public class FlowWallpaperService extends WallpaperService {
         private Particle[] particles;
         private ArrayList<Particle>[] buckets;
         private final Paint fadePaint = new Paint();
-        private final Paint linePaint = new Paint();
+        private final Paint linePaint = new Paint();      // bright core stroke
+        private final Paint glowPaint = new Paint();      // neon glow under the core
+        private final Paint dotPaint = new Paint();       // bright particle head
+        private final Paint dotGlowPaint = new Paint();   // particle halo
 
         private int W, H;
         private long seed = 0;
         private float colorOffX, colorOffY;
         private final int bgColor = 0xFF07060d;
-        private int particleCount = 3200;
-        private float speed = 1.35f;
+        private int particleCount = 2000;
+        private float speed = 1.55f;
 
-        private static final float NOISE_SCALE = 0.0016f;
-        private static final float TIME_SCALE = 0.00009f;
-        private static final float TURNS = 2.4f;
-        private static final float FADE = 0.03f;
-        private static final float TRAIL = 0.55f;
+        private static final float NOISE_SCALE = 0.0014f;
+        private static final float TIME_SCALE = 0.00010f;
+        private static final float TURNS = 2.6f;
+        private static final float FADE = 0.028f;
+        private static final float TRAIL = 0.78f;         // brighter, more solid trails
+        private static final float GLOW = 0.26f;          // glow layer alpha
         private static final int BUCKETS = 48;
         private static final float R = 150f;
         private static final float FORCE = 7f;
         private static final long FRAME_DELAY = 16; // ~60fps, battery friendly
+
+        private static final float STROKE_CORE = 2.6f;
+        private static final float STROKE_GLOW = 8.0f;
+        private static final float DOT_CORE = 2.8f;
+        private static final float DOT_GLOW = 7.0f;
 
         private long frame = 0;
         private float pointerX = -1, pointerY = -1;
         private boolean pointerActive = false;
         private boolean clearRequested = false;
         private final int[] bucketColors = new int[BUCKETS];
+        private final int[] bucketGlowColors = new int[BUCKETS];
 
         private final Runnable drawRunner = new Runnable() {
             @Override
@@ -81,10 +91,23 @@ public class FlowWallpaperService extends WallpaperService {
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
             setTouchEventsEnabled(true);
+
             linePaint.setStyle(Paint.Style.STROKE);
-            linePaint.setStrokeWidth(1.3f);
+            linePaint.setStrokeWidth(STROKE_CORE);
             linePaint.setStrokeCap(Paint.Cap.ROUND);
-            linePaint.setAntiAlias(false);
+            linePaint.setAntiAlias(true);
+
+            glowPaint.setStyle(Paint.Style.STROKE);
+            glowPaint.setStrokeWidth(STROKE_GLOW);
+            glowPaint.setStrokeCap(Paint.Cap.ROUND);
+            glowPaint.setAntiAlias(true);
+
+            dotPaint.setStyle(Paint.Style.FILL);
+            dotPaint.setAntiAlias(true);
+
+            dotGlowPaint.setStyle(Paint.Style.FILL);
+            dotGlowPaint.setAntiAlias(true);
+
             fadePaint.setAntiAlias(false);
 
             SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
@@ -111,8 +134,8 @@ public class FlowWallpaperService extends WallpaperService {
                 clearRequested = true;
             }
 
-            particleCount = prefs.getInt(KEY_PARTICLES, 3200);
-            speed = prefs.getFloat(KEY_SPEED, 1.35f);
+            particleCount = prefs.getInt(KEY_PARTICLES, 2000);
+            speed = prefs.getFloat(KEY_SPEED, 1.55f);
 
             if (buckets == null) {
                 buckets = new ArrayList[BUCKETS];
@@ -124,12 +147,18 @@ public class FlowWallpaperService extends WallpaperService {
         private void recomputeBucketColors() {
             for (int b = 0; b < BUCKETS; b++) {
                 int[] c = palette.colorAt(b);
-                bucketColors[b] = Color.argb((int) (TRAIL * 255), c[0], c[1], c[2]);
+                // brighten the RGB a bit so the neon pops against the dark background
+                int r = Math.min(255, (int) (c[0] * 1.12f));
+                int g = Math.min(255, (int) (c[1] * 1.12f));
+                int bl = Math.min(255, (int) (c[2] * 1.12f));
+                bucketColors[b] = Color.argb((int) (TRAIL * 255), r, g, bl);
+                bucketGlowColors[b] = Color.argb((int) (GLOW * 255), r, g, bl);
             }
         }
 
         private int[] defaultColors() {
-            return new int[]{255, 111, 97, 255, 179, 71, 232, 74, 138, 91, 64, 153};
+            // sci-fi neon sunset: coral / amber / magenta / electric indigo
+            return new int[]{255, 100, 90, 255, 190, 60, 255, 50, 170, 80, 120, 255};
         }
 
         private int[] parseColors(String csv) {
@@ -282,6 +311,18 @@ public class FlowWallpaperService extends WallpaperService {
                     ArrayList<Particle> list = buckets[b];
                     int n = list.size();
                     if (n == 0) continue;
+
+                    // neon glow layer (wide + soft)
+                    path.reset();
+                    for (int i = 0; i < n; i++) {
+                        Particle p = list.get(i);
+                        path.moveTo(p.px, p.py);
+                        path.lineTo(p.x, p.y);
+                    }
+                    glowPaint.setColor(bucketGlowColors[b]);
+                    c.drawPath(path, glowPaint);
+
+                    // bright core stroke
                     path.reset();
                     for (int i = 0; i < n; i++) {
                         Particle p = list.get(i);
@@ -290,6 +331,15 @@ public class FlowWallpaperService extends WallpaperService {
                     }
                     linePaint.setColor(bucketColors[b]);
                     c.drawPath(path, linePaint);
+
+                    // particle head halos + cores
+                    dotGlowPaint.setColor(bucketGlowColors[b]);
+                    dotPaint.setColor(bucketColors[b]);
+                    for (int i = 0; i < n; i++) {
+                        Particle p = list.get(i);
+                        c.drawCircle(p.x, p.y, DOT_GLOW, dotGlowPaint);
+                        c.drawCircle(p.x, p.y, DOT_CORE, dotPaint);
+                    }
                 }
                 frame++;
             } finally {
