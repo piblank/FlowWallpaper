@@ -57,8 +57,8 @@ public class FlowWallpaperService extends WallpaperService {
         private static final float NOISE_SCALE = 0.0016f;
         private static final float TIME_SCALE = 0.00009f;
         private static final float TURNS = 2.4f;
-        private static final float FADE = 0.04f;
-        private static final float TRAIL = 0.34f;
+        private static final float FADE = 0.03f;
+        private static final float TRAIL = 0.55f;
         private static final int BUCKETS = 48;
         private static final float R = 150f;
         private static final float FORCE = 7f;
@@ -81,7 +81,8 @@ public class FlowWallpaperService extends WallpaperService {
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
             setTouchEventsEnabled(true);
-            linePaint.setStrokeWidth(1.15f);
+            linePaint.setStyle(Paint.Style.STROKE);
+            linePaint.setStrokeWidth(1.3f);
             linePaint.setStrokeCap(Paint.Cap.ROUND);
             linePaint.setAntiAlias(false);
             fadePaint.setAntiAlias(false);
