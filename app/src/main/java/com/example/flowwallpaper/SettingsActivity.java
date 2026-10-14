@@ -20,7 +20,7 @@ public class SettingsActivity extends Activity {
     private EditText etParticles;
     private EditText etSpeed;
 
-    private static final String DEFAULT_COLORS = "255,111,97,255,179,71,232,74,138,91,64,153";
+    private static final String DEFAULT_COLORS = "255,100,90,255,190,60,255,50,170,80,120,255";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +45,8 @@ public class SettingsActivity extends Activity {
 
         SharedPreferences prefs = getSharedPreferences(FlowWallpaperService.PREFS, MODE_PRIVATE);
         etColors.setText(prefs.getString(FlowWallpaperService.KEY_COLORS, DEFAULT_COLORS));
-        etParticles.setText(String.valueOf(prefs.getInt(FlowWallpaperService.KEY_PARTICLES, 3200)));
-        etSpeed.setText(String.valueOf(prefs.getFloat(FlowWallpaperService.KEY_SPEED, 1.35f)));
+        etParticles.setText(String.valueOf(prefs.getInt(FlowWallpaperService.KEY_PARTICLES, 2000)));
+        etSpeed.setText(String.valueOf(prefs.getFloat(FlowWallpaperService.KEY_SPEED, 1.55f)));
 
         Button apply = findViewById(R.id.btnApply);
         apply.setOnClickListener(v -> {
